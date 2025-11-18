@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include<unistd.h>
+#include <unistd.h>
 #include <stdlib.h>
 
 #define iloscZnakowWPoleceniu sizeof(polecenie)/sizeof(polecenie[0])
@@ -34,6 +34,58 @@ char wskaznikIdzDo[] = ":";
 char nazwaPlikuPrzenoszona[30];
 int iloscElementowNowejNazwy = 2;
 
+
+int lokalizacjaDanegoTekstu(char plik[], char jeden[], int iloscZnakowTablicy)
+{
+    FILE *mangos = fopen(plik, "r");
+    if (mangos == NULL) {return -1;}
+
+    fseek(mangos, 0, SEEK_END);
+
+    int dlugosc = ftell(mangos);
+    char znak;
+
+
+    int linia = 0;
+    int punktWLini = 0;
+
+    int iloscZgodnych = 0;
+
+    //int j = 0 + linia;
+
+    for (int i = 1; i < dlugosc; i++)
+    {
+        fseek(mangos, i, 0);
+        fscanf(mangos, "%c", &znak);
+
+
+
+        if (jeden[punktWLini] == znak && punktWLini <= iloscZnakowTablicy) {
+            iloscZgodnych++;
+        }
+
+        if (iloscZgodnych == iloscZnakowTablicy)
+        {
+            return i - punktWLini;
+        }
+
+
+        punktWLini++;
+        if (znak == ';') {
+            i++;
+            linia++;
+            punktWLini = 0;
+            iloscZgodnych = 0;
+        }
+    }
+    if (iloscZgodnych != iloscZnakowTablicy) {
+        return -1;
+    }
+
+    fclose(mangos);
+}
+
+
 void porownywanieTablic(char meow[],char Nigga[],int sizeFirst, int sizeSecond) {
     boolCzyDanaFunkcja = 1;
     if (sizeFirst >= sizeSecond   -1) {
@@ -54,9 +106,7 @@ int main() {
     FILE *plik = fopen("plik.pl","r");
     fseek(plik, 0, 0);
 
-    fseek(plik, 0, SEEK_END);
 
-    dlugosc = ftell(plik);
 
     char fajnyZnak;
     for  (int i = 0; i < dlugosc; i++ )
@@ -264,6 +314,82 @@ int main() {
                 }
                 fclose(zmienne);
             }
+            else if (polecenie[ sizeof(liczbaCalkowita)/sizeof(liczbaCalkowita[0]) ] == '*' )
+            {
+
+
+                int iloscZnakowMiedzySpacjami = 0;
+                int iloscSpacji = 0;
+                int lokalizacjaZaczecia = -1;
+
+                //sprawdzamy spacje
+                for (int i = 0; i < sizeof(polecenie)/sizeof(polecenie[0]) - 1; i++) {
+                    if (iloscSpacji == 2 && polecenie[i] != ';') {
+                        iloscZnakowMiedzySpacjami++;
+                        if (lokalizacjaZaczecia == -1)
+                        {
+                            lokalizacjaZaczecia = i;
+                        }
+                    }
+                    if (polecenie[i] == ' ') {
+                        iloscSpacji++;
+                    }
+                }
+                //deklaracja tablicy
+                char poszukiwany[iloscZnakowMiedzySpacjami+4];
+                poszukiwany[0] = 'i';
+                poszukiwany[1] = 'n';
+                poszukiwany[2] = 't';
+                poszukiwany[3] = ' ';
+                for (int i = lokalizacjaZaczecia; i < lokalizacjaZaczecia+iloscZnakowMiedzySpacjami; i++)
+                {
+                    poszukiwany[i-lokalizacjaZaczecia+4] = polecenie[i];
+                }
+                //koniec tego gówna
+
+                int miejsceTekstu = lokalizacjaDanegoTekstu(plikZmiennych, poszukiwany, sizeof(poszukiwany)/sizeof(poszukiwany[0])-1) ;
+                printf("%d",miejsceTekstu);
+                FILE * zmiennee = fopen(plikZmiennych,"r");
+                fseek(zmiennee,miejsceTekstu,0);
+                fscanf(zmiennee, "%c", &znak);
+                printf("%c",' ');
+                printf("%c", znak);
+            }
+            else if (polecenie[ sizeof(liczbaCalkowita)/sizeof(liczbaCalkowita[0]) ] == 'R' )
+            {
+                int iloscZnakowMiedzySpacjami = 0;
+                int iloscSpacji = 0;
+                int lokalizacjaZaczecia = -1;
+
+                //sprawdzamy spacje
+                for (int i = 0; i < sizeof(polecenie)/sizeof(polecenie[0]) - 1; i++) {
+                    if (iloscSpacji == 2 && polecenie[i] != ';') {
+                        iloscZnakowMiedzySpacjami++;
+                        if (lokalizacjaZaczecia == -1)
+                        {
+                            lokalizacjaZaczecia = i;
+                        }
+                    }
+                    if (polecenie[i] == ' ') {
+                        iloscSpacji++;
+                    }
+                }
+                //deklaracja tablicy
+                char poszukiwany[iloscZnakowMiedzySpacjami+4];
+                poszukiwany[0] = 'i';
+                poszukiwany[1] = 'n';
+                poszukiwany[2] = 't';
+                poszukiwany[3] = ' ';
+                for (int i = lokalizacjaZaczecia; i < lokalizacjaZaczecia+iloscZnakowMiedzySpacjami; i++)
+                {
+                    poszukiwany[i-lokalizacjaZaczecia+4] = polecenie[i];
+                }
+                //koniec tego gówna
+
+                int miejsceTekstu = lokalizacjaDanegoTekstu(plikZmiennych, poszukiwany, sizeof(poszukiwany)/sizeof(poszukiwany[0])-1) ;
+                printf("%d",miejsceTekstu);
+            }
+
         }
         //start & Info
         boolCzyDanaFunkcja = 0;
@@ -381,7 +507,6 @@ int main() {
 
                 if (licznikOdZeraDlaPoleceniaMeowMeowMeowMeowMeow >= 4 && czyGoto) {
                     if ( znak != polecenie[licznikOdZeraDlaPoleceniaMeowMeowMeowMeowMeow-5+7] && znak != ' ') {
-                        printf("meow \n");
                         czyZastosowacGoto = 0;
                     }
                     else {
@@ -425,10 +550,11 @@ int main() {
 
 
             fclose(zmienne);
-
-
-
         }
+
+
+
+
         licznikLini++;
         znakCalkowity++;
         printf("\n");

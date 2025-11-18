@@ -2,10 +2,11 @@
 #pZmiennych pz;
 #usuńZawartość;
 napisz("Witaj Świecie");
-śpij(0,10);
-liczbaCałkowita n 123;
-:meow;
+liczbaCałkowita n meow 444;
+liczbaCałkowita n meowe 444;
+liczbaCałkowita n uwu 123;
 napisz("żydzi");
-idźDo meow;
+śpij(1);
+liczbaCałkowita R uwu;
 śpij(0,10);
 koniec;
