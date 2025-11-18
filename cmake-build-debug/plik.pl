@@ -1,5 +1,11 @@
-#pZmiennych xxxx;
+#!/bin/Polski 0;
+#pZmiennych pz;
+#usuńZawartość;
 napisz("Witaj Świecie");
 śpij(0,10);
 liczbaCałkowita n 123;
+:meow;
+napisz("żydzi");
+idźDo meow;
+śpij(0,10);
 koniec;

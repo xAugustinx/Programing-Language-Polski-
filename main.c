@@ -4,40 +4,52 @@
 
 #define iloscZnakowWPoleceniu sizeof(polecenie)/sizeof(polecenie[0])
 
+int startInfo = 1;
+
+
 int znakCalkowity = 0;
 //int tablicaIlosciZnakow[10];
 int dlugosc;
 int iloscLini = 0;
+int licznikLini = 0;
 int boolCzyDanaFunkcja = 1;
 
+int czyUstawionaInnaNazwa = 0;
+
 char znak;
-char plikZmiennych[] = "pz";
+//char plikZmiennych[] = "pz";
 
 char napisz[] = "napisz";
 char koniec[] = "koniec";
 char spij[] = "śpij";
 char liczbaCalkowita[] = "liczbaCałkowita";
 char pZmiennych[] = "#pZmiennych";
+char usunZawartosc[] = "#usuńZawartość";
+char infoS[] = "#!/bin/Polski";
+
+char idzDo[] = "idźDo";
+char wskaznikIdzDo[] = ":";
+
+
+char nazwaPlikuPrzenoszona[30];
+int iloscElementowNowejNazwy = 2;
 
 void porownywanieTablic(char meow[],char Nigga[],int sizeFirst, int sizeSecond) {
     boolCzyDanaFunkcja = 1;
     if (sizeFirst >= sizeSecond   -1) {
-        for (int i = 0; i < sizeSecond-2; i++) {
+        for (int i = 0; i < sizeSecond-1; i++) {
             if (meow[i] != Nigga[i]) {
                 boolCzyDanaFunkcja = 0;
                 break;
             }
         }
     }
+    else {
+        boolCzyDanaFunkcja = 0;
+    }
 }
 
 int main() {
-    // printf("####################################################################\n");
-    // printf("##################### Polski++ Aplpha 0.02 ##### ###################\n");
-    // printf("####################################################################\n");
-    // printf("##### ,,A niechaj narodowie wżdy postronni znają, ################# \n");
-    // printf("####### iż Polacy nie gęsi, iż swój język mają'' - Mikołaj Rej #### \n");
-    // printf("####################################################################\n");
 
     FILE *plik = fopen("plik.pl","r");
     fseek(plik, 0, 0);
@@ -55,12 +67,17 @@ int main() {
             iloscLini++;
         }
     }
+    for (int i = 0; i < 30; i++) {
+        nazwaPlikuPrzenoszona[i] = -1;
+    }
+    nazwaPlikuPrzenoszona[0] = 'p';
+    nazwaPlikuPrzenoszona[1] = 'z';
+    nazwaPlikuPrzenoszona[2] = 0;
 
     fseek(plik, 0, 0);
 
     while (1)
     {
-
         int iloscZnakowWPetli = 0;
 
         while (1) {
@@ -93,12 +110,48 @@ int main() {
             licznikFajny--;
         }
 
+        //ustawianie pliku
+        //wybranie pliku
+
+        boolCzyDanaFunkcja = 0;
+        porownywanieTablic(polecenie,pZmiennych,iloscZnakowWPoleceniu,sizeof(pZmiennych)/sizeof(pZmiennych[0]) );
+        if (boolCzyDanaFunkcja) {
+            iloscElementowNowejNazwy = 0;
+            for (int d = sizeof(pZmiennych)/sizeof(pZmiennych[0]); d < sizeof(polecenie)/sizeof(polecenie[0]); d++)
+            {
+                if (';' == polecenie[d]) {
+                    break;
+                }
+                iloscElementowNowejNazwy++;
+            }
+            czyUstawionaInnaNazwa = 1;
+        }
+        char plikZmiennych[iloscElementowNowejNazwy+1];
+        if (boolCzyDanaFunkcja) {
+            for (int i = 0; i < 30; i++)
+            {
+                if (i <  iloscElementowNowejNazwy) {
+                    nazwaPlikuPrzenoszona[i] = polecenie[i+sizeof(pZmiennych)/sizeof(pZmiennych[0])];
+                }
+                else {
+                    nazwaPlikuPrzenoszona[i] = -1;
+                }
+            }
+        }
+
+        for (int i = 0; i < iloscElementowNowejNazwy; i++)
+        {
+            plikZmiennych[i] = nazwaPlikuPrzenoszona[i];
+        }
+        plikZmiennych[iloscElementowNowejNazwy] = 0;
+
+
+
 
         //sprawdzanie czy funkcja to napisz
         porownywanieTablic(polecenie,napisz,sizeof(polecenie)/sizeof(polecenie[0]),sizeof(napisz)/sizeof(napisz[0])  );
         int czyZnalazloSieOtwarcie = 0;
         int czyWypisywacBool = 0;
-
 
         if (boolCzyDanaFunkcja) {
             for (int i = znakCalkowity - iloscZnakowWPetli; i < znakCalkowity; i++) {
@@ -199,8 +252,6 @@ int main() {
         }
         //deklarowanie intów
 
-
-        boolCzyDanaFunkcja = 0;
         porownywanieTablic(polecenie,liczbaCalkowita,iloscZnakowWPoleceniu,sizeof(liczbaCalkowita)/sizeof(liczbaCalkowita[0]) );
         if (boolCzyDanaFunkcja) {
 
@@ -214,15 +265,171 @@ int main() {
                 fclose(zmienne);
             }
         }
-        //wybranie pliku
+        //start & Info
         boolCzyDanaFunkcja = 0;
-        porownywanieTablic(polecenie,pZmiennych,iloscZnakowWPoleceniu,sizeof(pZmiennych)/sizeof(pZmiennych[0]) );
-        if (boolCzyDanaFunkcja) {
-            for (int i = 0; i < 2; i++) {
-                plikZmiennych[i] = polecenie[i+sizeof(pZmiennych)/sizeof(pZmiennych[0])];
+        porownywanieTablic(polecenie,infoS,iloscZnakowWPoleceniu,sizeof(infoS)/sizeof(infoS[0]) );
+        if (!boolCzyDanaFunkcja && licznikLini == 0) {
+            printf("Błąd, #!/bin/Polski x; wymagane na początku pliku");
+            break;
+        }
+        else if (boolCzyDanaFunkcja && licznikLini == 0) {
+            int licznik = 0;
+            int czy = 0;
+
+            while (1) {
+                fseek(plik, licznik, SEEK_SET);
+                fscanf(plik,"%c",&znak);
+                if (znak == ';') {
+                    break;
+                }
+                else if (znak == '1') {
+                    czy = 1;
+                }
+                licznik++;
+            }
+
+            if (czy) {
+                printf("####################################################################\n");
+                printf("##################### Polski++ Aplpha 0.02 ##### ###################\n");
+                printf("####################################################################\n");
+                printf("##### ,,A niechaj narodowie wżdy postronni znają, ################# \n");
+                printf("####### iż Polacy nie gęsi, iż swój język mają'' - Mikołaj Rej #### \n");
+                printf("####################################################################\n");
             }
         }
+        //usuwanie zawartości pliku
+        porownywanieTablic(polecenie,usunZawartosc,iloscZnakowWPoleceniu,sizeof(usunZawartosc)/sizeof(usunZawartosc[0]) );
+        if (boolCzyDanaFunkcja) {
+            FILE *zmienne = fopen(plikZmiennych, "w");
+            fprintf(zmienne,"%s","");
+            fclose(zmienne);
+        }
+        //znacznik goto
+        porownywanieTablic(polecenie,wskaznikIdzDo,iloscZnakowWPoleceniu,sizeof(wskaznikIdzDo)/sizeof(wskaznikIdzDo[0]) );
+        if (boolCzyDanaFunkcja) {
+            FILE *zmienne = fopen(plikZmiennych, "a");
+            fprintf(zmienne,"%s","\ngoto ");
+            for (int i = 1; i < iloscZnakowWPoleceniu-1; i++) {
+                fprintf(zmienne,"%c",polecenie[i]);
+            }
+            fprintf(zmienne," ");
+            fprintf(zmienne,"%d",znakCalkowity-iloscZnakowWPoleceniu);
+            fprintf(zmienne,"%c",';');
+            fclose(zmienne);
 
+        }
+        //goto wsskaźnik
+        porownywanieTablic(polecenie,idzDo,iloscZnakowWPoleceniu,sizeof(idzDo)/sizeof(idzDo[0]));
+        if (boolCzyDanaFunkcja)
+        {
+            FILE *zmienne = fopen(plikZmiennych, "r");
+            fseek(zmienne,0,0);
+            int znacznikZnakuWZmiennych = 0;
+            char meowGoto[] = "goto ";
+            fseek(zmienne,0,SEEK_END);
+            int fajny = ftell(zmienne);
+            int licznikOdZeraDlaPoleceniaMeowMeowMeowMeowMeow = 0;
+            int czyGoto = 1;
+            for (int i = 0; i < fajny; i++)
+            {
+                fseek(zmienne,i,SEEK_SET);
+                fscanf(zmienne,"%c",&znak);
+                if (znak != meowGoto[licznikOdZeraDlaPoleceniaMeowMeowMeowMeowMeow]) {
+                    czyGoto = 0;
+                    break;
+                }
+
+                if (licznikOdZeraDlaPoleceniaMeowMeowMeowMeowMeow >= 4 && czyGoto) {
+                    if ( znak == polecenie[licznikOdZeraDlaPoleceniaMeowMeowMeowMeowMeow-3] ) {
+                        printf("meow \n");
+                    }
+                }
+
+                if (i == ';') {
+                    i = i+2;
+                    licznikOdZeraDlaPoleceniaMeowMeowMeowMeowMeow = 0;
+                    czyGoto = 1;
+                }
+                licznikOdZeraDlaPoleceniaMeowMeowMeowMeowMeow++;
+            }
+            fclose(zmienne);
+        }
+        //goto
+        porownywanieTablic(polecenie,idzDo,iloscZnakowWPoleceniu,sizeof(idzDo)/sizeof(idzDo[0]));
+        if (boolCzyDanaFunkcja)
+        {
+            FILE *zmienne = fopen(plikZmiennych, "r");
+            fseek(zmienne,0,0);
+            int znacznikZnakuWZmiennych = 0;
+            char meowGoto[] = "goto ";
+            fseek(zmienne,0,SEEK_END);
+            int fajny = ftell(zmienne);
+            int licznikOdZeraDlaPoleceniaMeowMeowMeowMeowMeow = 0;
+            int czyGoto = 1;
+            int czyZastosowacGoto = 1;
+            int wartoscLini;
+            char tablicaDoZapisuZnakow[20];
+
+            for (int i = 1; i < fajny; i++)
+            {
+                fseek(zmienne,i,SEEK_SET);
+                fscanf(zmienne,"%c",&znak);
+                if (znak != meowGoto[licznikOdZeraDlaPoleceniaMeowMeowMeowMeowMeow] && licznikOdZeraDlaPoleceniaMeowMeowMeowMeowMeow < 4) {
+                    czyGoto = 0;
+                    czyZastosowacGoto = 0;
+                }
+
+                if (licznikOdZeraDlaPoleceniaMeowMeowMeowMeowMeow >= 4 && czyGoto) {
+                    if ( znak != polecenie[licznikOdZeraDlaPoleceniaMeowMeowMeowMeowMeow-5+7] && znak != ' ') {
+                        printf("meow \n");
+                        czyZastosowacGoto = 0;
+                    }
+                    else {
+                        czyZastosowacGoto++;
+                        if (czyZastosowacGoto == 1)
+                        {
+                            wartoscLini = ftell(zmienne);
+                        }
+                    }
+
+                }
+                else {
+                    czyZastosowacGoto = 0;
+                }
+
+                if (znak == ';') {
+                    i = i+2;
+                    licznikOdZeraDlaPoleceniaMeowMeowMeowMeowMeow = 0;
+                    czyGoto = 1;
+                    czyZastosowacGoto = 1;
+                }
+                licznikOdZeraDlaPoleceniaMeowMeowMeowMeowMeow++;
+            }
+            int liczbaMeowMeowUwU;
+            if (czyZastosowacGoto > 0)
+            {
+                while (1) {
+                    wartoscLini++;
+                    fseek(zmienne,wartoscLini,0);
+                    fscanf(zmienne,"%c",&znak);
+                    if (znak == ';') {break;}
+                    else if (znak == ' ')
+                    {
+                        wartoscLini++;
+                        fscanf(zmienne,"%d",&liczbaMeowMeowUwU);
+                        znakCalkowity = liczbaMeowMeowUwU;
+                        break;
+                    }
+                }
+            }
+
+
+            fclose(zmienne);
+
+
+
+        }
+        licznikLini++;
         znakCalkowity++;
         printf("\n");
     }
